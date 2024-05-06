@@ -19,4 +19,6 @@
             echo "Error: " . $sql . "<br>" . $conecta->error;
         }
     }
+
+    //hola
 ?>
