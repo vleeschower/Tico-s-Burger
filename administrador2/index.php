@@ -1,9 +1,27 @@
 <?php
 session_start();
+require_once "../conexion.php";
+
 if(!isset($_SESSION['id'])){
     header("Location: ../InicioSesión/IndexSesion.php");
 }
 $nombre=$_SESSION['Nombre'];
+$id=$_SESSION['id'];
+$id_cargo=$_SESSION['id_cargo'];
+
+// Consulta para obtener la descripción del cargo
+$sql_cargo = "SELECT descripcion FROM cargo WHERE id_cargo=$id_cargo";
+$resultado_cargo = $conecta->query($sql_cargo);
+
+if ($resultado_cargo->num_rows > 0) {
+    // Almacenar la descripción del cargo en una variable de sesión
+    while($row = $resultado_cargo->fetch_assoc()) {
+      $_SESSION['descripcion_cargo'] = $row["descripcion"];
+    }
+  } else {
+    echo "0 resultados";
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -44,55 +62,25 @@ $nombre=$_SESSION['Nombre'];
                         <div class="nav">
                             <div class="sb-sidenav-menu-heading">Administrar</div>
                             <!-- Cambiar link-->
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="adminUsuarios.php">
                                 <!-- icono de Dashboard-->
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Administradores
+                                Usuarios
                             </a>
-                            <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+
+                            <div class="sb-sidenav-menu-heading">Servicio</div>
+
+                            <a class="nav-link" href="index.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                Pedidos
                             </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                Pages
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+
+                            <a class="nav-link" href="index.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Opiniones
                             </a>
-                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                        Authentication
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="login.html">Login</a>
-                                            <a class="nav-link" href="register.html">Register</a>
-                                            <a class="nav-link" href="password.html">Forgot Password</a>
-                                        </nav>
-                                    </div>
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                        Error
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="401.html">401 Page</a>
-                                            <a class="nav-link" href="404.html">404 Page</a>
-                                            <a class="nav-link" href="500.html">500 Page</a>
-                                        </nav>
-                                    </div>
-                                </nav>
-                            </div>
-                            <div class="sb-sidenav-menu-heading">Addons</div>
+                            
+                            <div class="sb-sidenav-menu-heading">Información</div>
                             <a class="nav-link" href="tables.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Tabla usuarios
@@ -101,7 +89,7 @@ $nombre=$_SESSION['Nombre'];
                     </div>
                     <div class="sb-sidenav-footer">
                         <div class="small">Conectado como:</div>
-                        Start Bootstrap
+                        <?php echo $_SESSION['descripcion_cargo']; ?>
                     </div>
                 </nav>
             </div>
@@ -110,12 +98,12 @@ $nombre=$_SESSION['Nombre'];
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Panel</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">Actividades</li>
                         </ol>
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Pedidos</div>
+                                    <div class="card-body">Pedidos iniciados</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">Ver detalles</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -124,7 +112,7 @@ $nombre=$_SESSION['Nombre'];
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Tickes</div>
+                                    <div class="card-body">Pedidos en proceso</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <a class="small text-white stretched-link" href="#">Ver detalles</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -133,61 +121,21 @@ $nombre=$_SESSION['Nombre'];
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">Success Card</div>
+                                    <div class="card-body">Pedidos completados</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="#">Ver detalles</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">Danger Card</div>
+                                    <div class="card-body">Opiniones</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="#">Ver detalles</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
-                                Usuarios
-                            </div>
-                            <div class="card-body">
-                                <table id="datatablesSimple">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                        </tr>
-                                    </tfoot>
-                                    <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
